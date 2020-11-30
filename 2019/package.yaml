@@ -1,0 +1,45 @@
+name:                advent2019
+version:             0.1.0.0
+github:              "jordangedney/advent2019"
+license:             MIT
+author:              "Jordan Gedney"
+maintainer:          ""
+copyright:           ""
+
+description: AoC 2019 Solutions
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+  dependencies:
+  - split
+  - containers
+  - vector
+  - sort
+
+executables:
+  advent2019-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - advent2019
+
+tests:
+  advent2019-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - advent2019
+    - hspec
+    - QuickCheck
+    - containers
