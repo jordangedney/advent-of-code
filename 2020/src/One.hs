@@ -1,6 +1,6 @@
 -- | Here we go.
 
-module One (main) where
+module One (main, partOne, partTwo) where
 
 partOne = undefined
 partTwo = undefined
