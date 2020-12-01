@@ -1,6 +1,5 @@
-module Main where
+-- | I like brute force; only solve one at a time.
 
-import Lib
+module Main (main) where
 
-main :: IO ()
-main = someFunc
+import One (main)

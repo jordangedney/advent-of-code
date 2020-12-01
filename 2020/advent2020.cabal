@@ -27,7 +27,7 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      One
   other-modules:
       Paths_advent2020
   hs-source-dirs:
