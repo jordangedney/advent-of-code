@@ -2,4 +2,5 @@
 
 module Main (main) where
 
-import One (main)
+-- import One (main)
+import Two (main)
