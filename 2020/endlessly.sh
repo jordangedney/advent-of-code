@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == "build" ]; then
-    find . | grep .hs | entr sh -c 'stack build; pkill advent2020-exe;'
+    find . | grep .hs | entr sh -c 'stack build; stack exec advent2020-exe ;'
     exit 0
 fi
 if [ "$1" == "run" ]; then

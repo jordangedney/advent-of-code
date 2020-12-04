@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Four
       Three
       Two
       One
@@ -59,6 +60,7 @@ test-suite advent2020-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      FourSpec
       ThreeSpec
       TwoSpec
       OneSpec
