@@ -10,7 +10,7 @@ main = do
   print (partOne input)
   print (partTwo input)
 
-partOne input = input & map (foldr1 (++)) & map unique & map length & foldr1 (+)
+partOne input = map (length . unique . concat) input & sum
 
 partTwo input =
    length [oneAnswer | groupsAnswers <- input, oneAnswer <- (head groupsAnswers),
