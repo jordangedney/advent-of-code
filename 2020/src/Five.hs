@@ -1,4 +1,4 @@
--- | Let's see if we can't beat ghavil.
+-- | REDACTED
 
 module Five where
 
