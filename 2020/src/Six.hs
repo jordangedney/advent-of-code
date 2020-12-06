@@ -13,5 +13,5 @@ main = do
 partOne input = input & map (foldr1 (++)) & map unique & map length & foldr1 (+)
 
 partTwo input =
-   length [oneAnswer | groupsAnswers <- input, oneAnswer <- (head groupsAnswer),
+   length [oneAnswer | groupsAnswers <- input, oneAnswer <- (head groupsAnswers),
            (all (== True) (map (elem oneAnswer) groupsAnswers))]
