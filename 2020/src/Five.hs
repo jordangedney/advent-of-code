@@ -3,7 +3,6 @@
 module Five where
 
 import Util
-import Data.Sort (sort)
 
 main :: IO ()
 main = do
@@ -29,5 +28,5 @@ seatID (row, col) = row * 8 + col
 partOne input = map (seatID . toSeatNumber) input & foldr1 max
 
 partTwo input =
-  let seats = map (seatID . toSeatNumber) input & sort
+  let seats = map (seatID . toSeatNumber) input
   in head ([x | x <- [foldr1 min seats..foldr1 max seats], not (x `elem` seats)])
