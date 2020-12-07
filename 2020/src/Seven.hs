@@ -10,7 +10,6 @@ main = do
   input <- parseBagRules <$> readFile "inputs/seven"
   print (partOne input)
   print (partTwo input)
-  return ()
 
 parseBagRules input =
   lines input
