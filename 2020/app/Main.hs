@@ -8,4 +8,5 @@ module Main (main) where
 -- import Four (main)
 -- import Five (main)
 -- import Six (main)
-import Seven (main)
+-- import Seven (main)
+import Eight (main)
