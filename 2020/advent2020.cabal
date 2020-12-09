@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Nine
       Eight
       Seven
       Six
