@@ -10,4 +10,5 @@ module Main (main) where
 -- import Six (main)
 -- import Seven (main)
 -- import Eight (main)
-import Nine (main)
+-- import Nine (main)
+import Ten (main)
