@@ -3,6 +3,7 @@
 module Util ( (&)
             , count
             , unique
+            , Coords
             , splitOn) where
 
 import Data.Function ((&))
@@ -18,3 +19,5 @@ unique = go Set.empty where
    | x `Set.member` s = go s xs
    | otherwise        = x : go (Set.insert x s) xs
   go _ _              = []
+
+type Coords = (Int, Int)
