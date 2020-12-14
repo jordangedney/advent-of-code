@@ -13,9 +13,6 @@ main = do
   print (partTwo input)
   return ()
 
-readInt :: String -> Int
-readInt = read
-
 overLappingChunks size input =
   let result = take size input
   in if length result < size

@@ -4,6 +4,7 @@ module Util ( (&)
             , count
             , unique
             , Coords
+            , readInt
             , splitOn) where
 
 import Data.Function ((&))
@@ -21,3 +22,6 @@ unique = go Set.empty where
   go _ _              = []
 
 type Coords = (Int, Int)
+
+readInt :: String -> Int
+readInt = read
