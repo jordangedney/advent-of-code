@@ -1,0 +1,33 @@
+cabal-version:      2.4
+name:               x2021
+version:            0.1.0.0
+
+author:             Jordan Gedney
+maintainer:         jordangedney@gmail.com
+
+library
+    exposed-modules:  
+        X1
+
+    default-extensions:
+        LambdaCase
+      , OverloadedLists
+
+    build-depends:    
+        base ^>= 4.16.0.0
+      , containers
+
+    mixins:   
+        base (Prelude as BasePrelude)
+      , base hiding (Prelude)
+    hs-source-dirs:   src
+
+executable x2021
+    main-is:          Main.hs
+
+    build-depends:
+        base ^>= 4.16.0.0
+      , x2021
+
+    hs-source-dirs:   app
+
