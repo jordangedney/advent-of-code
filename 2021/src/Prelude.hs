@@ -10,11 +10,13 @@ module Prelude
   , (<|)
   , (>>>)
   , (<<<)
+  , (<&>)
   )
 where
 
 import BasePrelude as P hiding (map)
 
+import Data.Functor ((<&>))
 import Data.Char
 import Data.Map.Strict (Map)
 import Data.Set (Set)
@@ -41,4 +43,3 @@ infixl 9 >>>
 (>>>) :: (a -> b) -> (b -> c) -> (a -> c)
 f >>> g = g . f
 {-# INLINE (>>>) #-}
-

@@ -6,7 +6,8 @@ author:             Jordan Gedney
 maintainer:         jordangedney@gmail.com
 
 library
-    exposed-modules:  
+    exposed-modules:
+        X2
         X1
 
     default-extensions:
