@@ -6,6 +6,7 @@ module Prelude
   , Map
   , Set
   , map
+  , rotate
   , (|>)
   , (<|)
   , (>>>)
@@ -20,6 +21,7 @@ import Data.Functor ((<&>))
 import Data.Char
 import Data.Map.Strict (Map)
 import Data.Set (Set)
+import Data.List (transpose)
 
 map :: Functor f => (a -> b) -> f a -> f b
 map = fmap
@@ -43,3 +45,6 @@ infixl 9 >>>
 (>>>) :: (a -> b) -> (b -> c) -> (a -> c)
 f >>> g = g . f
 {-# INLINE (>>>) #-}
+
+rotate :: [String] -> [String]
+rotate = reverse . transpose . map reverse
