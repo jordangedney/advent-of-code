@@ -1,5 +1,4 @@
 module X3 (main) where
-import GHC.Base (Bool)
 
 binToInt :: String -> Int
 binToInt = foldl (\acc x -> acc * 2 + digitToInt x) 0
@@ -25,8 +24,7 @@ getRating cmp pos xs = map snd xs
   |> (\ys -> if length ys == 1 then ys else getRating cmp (pos + 1) ys)
 
 part2 :: [String] -> Int
-part2 xs =
-  zip [0..] xs
+part2 xs = zip [0..] xs
   |> (\x -> (getRating (>=) 0 x, getRating (<) 0 x))
   |> (\([(_, a)], [(_, b)]) -> binToInt a * binToInt b)
 
