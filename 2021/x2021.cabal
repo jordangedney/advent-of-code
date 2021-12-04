@@ -7,6 +7,7 @@ maintainer:         jordangedney@gmail.com
 
 library
     exposed-modules:
+        X4
         X3
         X2
         X1
@@ -14,10 +15,13 @@ library
     default-extensions:
         LambdaCase
       , OverloadedLists
+      , ScopedTypeVariables
 
     build-depends:    
         base ^>= 4.16.0.0
       , containers
+      , split
+      , vector
 
     mixins:   
         base (Prelude as BasePrelude)

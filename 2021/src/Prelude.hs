@@ -5,8 +5,10 @@ module Prelude
   , module Data.Char
   , Map
   , Set
+  , Vector
   , map
   , rotate
+  , splitOn
   , (|>)
   , (<|)
   , (>>>)
@@ -20,8 +22,10 @@ import BasePrelude as P hiding (map)
 import Data.Functor ((<&>))
 import Data.Char
 import Data.Map.Strict (Map)
+import Data.Vector (Vector)
 import Data.Set (Set)
 import Data.List (transpose)
+import Data.List.Split (splitOn)
 
 map :: Functor f => (a -> b) -> f a -> f b
 map = fmap
