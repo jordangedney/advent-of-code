@@ -8,28 +8,19 @@ parse xs =
   |> map (splitOn ",")
   |> (\[[a,b], [c,d]] -> ((read a, read b), (read c, read d)))
 
-mkList a b | a < b = [a..b]
-           | otherwise = reverse [b..a]
+frequencies :: (Foldable t, Ord a) => t a -> Map a Int
+frequencies = foldr (\l r -> M.insertWith (+) l 1 r) []
 
-genLine ((a, b), (c, d)) =
-  if a == c
-  then if b < d then [(a, x) | x <- [b..d]]
-       else reverse [(a, x) | x <- [d..b]]
-  else if b == d
-       then if a < c then [(x, b) | x <- [a..c]]
-            else reverse [(x, b) | x <- [c..a]]
-       else zip (mkList a c) (mkList b d)
+mkLine :: (Point, Point) -> [Point]
+mkLine (e@(a, b), f@(c, d))
+  | e == f = [e]
+  | otherwise = e : mkLine ((step a c, step b d), f)
+  where step x y | x == y = x
+                 | x < y = x + 1
+                 | x > y = x - 1
 
-part1 xs =
-  let onlyStrightLines = [x | x@((a, b), (c, d)) <- xs,  (a == c) || (b == d)]
-      points = map genLine onlyStrightLines |> concat
-      grid :: Map (Int, Int) Int = foldr (\l r -> M.insertWith (+) l 1 r) [] points
-  in M.filter (> 1) grid |> length
-
-part2 xs =
-  let points = map genLine xs |> concat
-      grid :: Map (Int, Int) Int = foldr (\l r -> M.insertWith (+) l 1 r) [] points
-  in M.filter (> 1) grid |> length
+part1 xs = part2 [x | x@((a, b), (c, d)) <- xs,  (a == c) || (b == d)]
+part2 xs = map mkLine xs |> concat |> frequencies |> M.filter (> 1) |> length
 
 main :: IO ()
-main = readFile "inputs/5" <&> lines >>> map parse >>> part1 >>= print
+main = readFile "inputs/5" <&> lines >>> map parse >>> part2 >>= print

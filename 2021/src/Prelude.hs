@@ -6,6 +6,7 @@ module Prelude
   , Map
   , Set
   , Vector
+  , Point
   , map
   , rotate
   , splitOn
@@ -52,3 +53,5 @@ f >>> g = g . f
 
 rotate :: [String] -> [String]
 rotate = reverse . transpose . map reverse
+
+type Point = (Int, Int)
