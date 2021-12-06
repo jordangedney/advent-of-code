@@ -8,6 +8,10 @@ maintainer:         jordangedney@gmail.com
 executable x2021
     main-is:          Main.hs
 
+    other-modules:
+        Lude
+        X6
+
     build-depends:
         base ^>= 4.16.0.0
       , containers
