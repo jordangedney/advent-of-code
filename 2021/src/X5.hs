@@ -1,5 +1,7 @@
 module X5 (main) where
 
+import Lude
+
 import qualified Data.Map as M
 
 parse :: String -> ((Int, Int), (Int, Int))

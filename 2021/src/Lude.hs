@@ -1,6 +1,6 @@
 {-# language NoImplicitPrelude #-}
 
-module Prelude
+module Lude
   ( module P
   , module Data.Char
   , Map
@@ -19,7 +19,7 @@ module Prelude
   )
 where
 
-import BasePrelude as P hiding (map)
+import Prelude as P hiding (map)
 
 import Data.Functor ((<&>))
 import Data.Char

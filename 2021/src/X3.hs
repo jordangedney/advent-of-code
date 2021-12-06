@@ -1,5 +1,7 @@
 module X3 (main) where
 
+import Lude
+
 binToInt :: String -> Int
 binToInt = foldl (\acc x -> acc * 2 + digitToInt x) 0
 

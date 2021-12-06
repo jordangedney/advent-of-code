@@ -18,9 +18,6 @@ executable x2021
         LambdaCase
       , OverloadedLists
       , ScopedTypeVariables
-
-    mixins:
-        base (Prelude as BasePrelude)
-      , base hiding (Prelude)
+      , NoImplicitPrelude
 
     hs-source-dirs:   src

@@ -1,5 +1,7 @@
 module X2 (main) where
 
+import Lude
+
 data Movement = Forward Int | Down Int | Up Int deriving (Eq, Show)
 
 parse :: String -> Movement

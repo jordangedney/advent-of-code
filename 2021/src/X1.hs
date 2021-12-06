@@ -1,5 +1,7 @@
 module X1 (main) where
 
+import Lude
+
 partOne :: [Int] -> Int
 partOne xs = length [b | (a, b) <- zip xs (tail xs), b > a]
 

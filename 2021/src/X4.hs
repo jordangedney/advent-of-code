@@ -1,5 +1,7 @@
 module X4 (main) where
 
+import Lude
+
 import Data.Vector (fromList, (//), (!), indexed, toList)
 
 numCol = 5
