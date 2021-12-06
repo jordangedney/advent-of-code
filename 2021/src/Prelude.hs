@@ -10,6 +10,7 @@ module Prelude
   , map
   , rotate
   , splitOn
+  , frequencies
   , (|>)
   , (<|)
   , (>>>)
@@ -27,6 +28,8 @@ import Data.Vector (Vector)
 import Data.Set (Set)
 import Data.List (transpose)
 import Data.List.Split (splitOn)
+
+import qualified Data.Map as M
 
 map :: Functor f => (a -> b) -> f a -> f b
 map = fmap
@@ -55,3 +58,6 @@ rotate :: [String] -> [String]
 rotate = reverse . transpose . map reverse
 
 type Point = (Int, Int)
+
+frequencies :: (Foldable t, Ord a) => t a -> Map a Int
+frequencies = foldr (\l r -> M.insertWith (+) l 1 r) []

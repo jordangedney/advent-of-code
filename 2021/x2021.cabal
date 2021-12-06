@@ -12,6 +12,7 @@ library
         X3
         X2
         X1
+        Prelude
 
     default-extensions:
         LambdaCase
@@ -27,6 +28,7 @@ library
     mixins:   
         base (Prelude as BasePrelude)
       , base hiding (Prelude)
+
     hs-source-dirs:   src
 
 executable x2021
@@ -35,6 +37,10 @@ executable x2021
     build-depends:
         base ^>= 4.16.0.0
       , x2021
+
+    mixins:
+        base (Prelude as BasePrelude)
+      , base hiding (Prelude)
 
     hs-source-dirs:   app
 

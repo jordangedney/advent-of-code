@@ -8,9 +8,6 @@ parse xs =
   |> map (splitOn ",")
   |> (\[[a,b], [c,d]] -> ((read a, read b), (read c, read d)))
 
-frequencies :: (Foldable t, Ord a) => t a -> Map a Int
-frequencies = foldr (\l r -> M.insertWith (+) l 1 r) []
-
 mkLine :: (Point, Point) -> [Point]
 mkLine (e@(a, b), f@(c, d))
   | e == f = [e]
