@@ -4,7 +4,7 @@ import Lude
 
 import qualified Data.Map as M
 
-parse :: String -> ((Int, Int), (Int, Int))
+parse :: String -> (Point, Point)
 parse xs =
   splitOn " -> " xs
   |> map (splitOn ",")
