@@ -12,10 +12,10 @@ parse xs =
 go (a, b, c, d, e, f, g, h, i) =
    (b, c, d, e, f, g, a + h, i, a)
 
-count (a, b, c, d, e, f, g, h, i) = a+b+c+d+e+f+g+h+i
+countFish (a, b, c, d, e, f, g, h, i) = a + b + c + d + e + f + g + h + i
 
-part1 xs = count (iterate go xs !! 80)
-part2 xs = count (iterate go xs !! 256)
+part1 xs = countFish (iterate go xs !! 80)
+part2 xs = countFish (iterate go xs !! 256)
 
 main :: IO ()
 main = readFile "inputs/6" <&> lines >>> concat >>> parse >>> part2 >>= print
