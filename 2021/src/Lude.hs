@@ -30,7 +30,6 @@ import Data.Set (Set)
 import Data.List (transpose)
 import Data.List.Split (splitOn)
 
--- import qualified Data.Map (findWithDefault)
 import qualified Data.Map as M
 
 map :: Functor f => (a -> b) -> f a -> f b
