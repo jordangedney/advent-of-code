@@ -6,15 +6,16 @@ parse xs =
   splitOn "," xs
   |> map read
   |> frequencies
-  |> (\f -> (\x -> findWithDefault 0 x f))
-  |> (\g -> (g 0, g 1, g 2, g 3, g 4, g 5, g 6, g 7, g 8))
+  |> (\freqs -> (\idx -> findWithDefault 0 idx freqs))
+  |> (\get -> (get 0, get 1, get 2, get 3, get 4, get 5, get 6, get 7, get 8))
 
-go (x1, x2, x3, x4, x5, x6, x7, x8, x9) = (x2, x3, x4, x5, x6, x7, (x8+x1), x9, x1)
+go (a, b, c, d, e, f, g, h, i) =
+   (b, c, d, e, f, g, a + h, i, a)
 
-count (x1, x2, x3, x4, x5, x6, x7, x8, x9) = x1+x2+x3+x4+x5+x6+x7+x8+x9
+count (a, b, c, d, e, f, g, h, i) = a+b+c+d+e+f+g+h+i
 
-part1 xs = iterate go xs !! 80  |> count
-part2 xs = iterate go xs !! 256 |> count
+part1 xs = count (iterate go xs !! 80)
+part2 xs = count (iterate go xs !! 256)
 
 main :: IO ()
 main = readFile "inputs/6" <&> lines >>> concat >>> parse >>> part2 >>= print
