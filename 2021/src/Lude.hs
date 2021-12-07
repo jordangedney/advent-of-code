@@ -11,6 +11,7 @@ module Lude
   , rotate
   , splitOn
   , frequencies
+  , range
   , M.findWithDefault
   , (|>)
   , (<|)
@@ -62,3 +63,7 @@ type Point = (Int, Int)
 
 frequencies :: (Foldable t, Ord a) => t a -> Map a Int
 frequencies = foldr (\l r -> M.insertWith (+) l 1 r) []
+
+range :: Int -> Int -> [Int]
+range a b | a > b = reverse [b..a]
+          | otherwise = [a..b]
