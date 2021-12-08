@@ -1,4 +1,5 @@
 {-# language NoImplicitPrelude #-}
+{-# language OverloadedLists #-}
 
 module Lude
   ( module P
@@ -12,6 +13,8 @@ module Lude
   , splitOn
   , frequencies
   , range
+  , sort
+  , nub
   , M.findWithDefault
   , (|>)
   , (<|)
@@ -30,6 +33,8 @@ import Data.Vector (Vector)
 import Data.Set (Set)
 import Data.List (transpose)
 import Data.List.Split (splitOn)
+import Data.Sort (sort)
+import Data.List (nub)
 
 import qualified Data.Map as M
 
@@ -67,3 +72,4 @@ frequencies = foldr (\l r -> M.insertWith (+) l 1 r) []
 range :: Int -> Int -> [Int]
 range a b | a > b = reverse [b..a]
           | otherwise = [a..b]
+

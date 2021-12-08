@@ -10,17 +10,18 @@ executable x2021
 
     other-modules:
         Lude
-        X7
+        X8
 
     build-depends:
         base ^>= 4.16.0.0
       , containers
       , split
       , vector
+      , sort
 
     default-extensions:
         LambdaCase
-      , OverloadedLists
+      -- , OverloadedLists
       , ScopedTypeVariables
       , NoImplicitPrelude
 
