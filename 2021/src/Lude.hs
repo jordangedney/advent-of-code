@@ -15,6 +15,7 @@ module Lude
   , range
   , sort
   , nub
+  , fromDigits
   , M.findWithDefault
   , (|>)
   , (<|)
@@ -73,3 +74,5 @@ range :: Int -> Int -> [Int]
 range a b | a > b = reverse [b..a]
           | otherwise = [a..b]
 
+fromDigits :: [Int] -> Int
+fromDigits = foldl (\n d -> 10*n + d) 0

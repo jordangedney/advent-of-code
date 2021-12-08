@@ -2,44 +2,35 @@ module X8 where
 
 import Lude
 
-parse xs = splitOn "|" xs |> map words
+parse = map words . splitOn "|"
 
-knownSizes :: [Int]
-knownSizes = [2, 3, 4, 7]
+getRule codes =
+  let one    = numHas [(2 `sides`)]
+      seven  = numHas [(3 `sides`)]
+      four   = numHas [(4 `sides`)]
+      eight  = numHas [(7 `sides`)]
+      nine   = numHas [(6 `sides`), (`contains` one), (`contains` four)]
+      zero   = numHas [(6 `sides`), (`contains` one), (`missing` four)]
+      six    = numHas [(6 `sides`), (`missing` one), (`missing` four)]
+      three  = numHas [(5 `sides`), (`contains` one)]
+      five   = numHas [(5 `sides`), (nine `contains`), (`missing` three)]
+      two    = numHas [(5 `sides`), (nine `missing`)]
+  in zip [0..] [zero, one, two, three, four, five, six, seven, eight, nine]
+  where a `contains` b = all (`elem` a) b
+        a `missing` b = not (a `contains` b)
+        x `sides` y = length y == x
+        numHas ps = head [x | x <- codes, foldl1 (&&) (map ($ x) ps)]
 
-part1 xs = map (!! 1) xs
-  |> (\ys -> [x | y <- ys, x <- y,  length x `elem` knownSizes])
-  |> length
+translate [input, output] =
+  let rules = getRule (map sort input <> map sort output)
+      go num = filter (\(a, b) -> b == sort num) rules |> head |> fst
+  in map go output
 
-a `has` b = all (`elem` a) b
-a `no` b = not (a `has` b)
+part1 :: [[Int]] -> Int
+part1 = sum . map length . map (filter (`elem` [1, 7, 4, 8]))
 
-rules xs =
-  let one    = head [x | x <- xs, length x == 2]
-      seven  = head [x | x <- xs, length x == 3]
-      four   = head [x | x <- xs, length x == 4]
-      nine   = head [x | x <- xs, length x == 6, x `has` one, x `has` four]
-      zero   = head [x | x <- xs, length x == 6, x `has` one, x `no` four]
-      six    = head [x | x <- xs, length x == 6, x `no` one,  x `no` four]
-      three  = head [x | x <- xs, length x == 5, x `has` one]
-      five   = head [x | x <- xs, length x == 5, nine `has` x, x `no` three]
-      two    = head [x | x <- xs, length x == 5, nine `no` x]
-      eight  = head [x | x <- xs, length x == 7]
-  in [zero, one, two, three, four, five, six, seven, eight, nine]
-
-getRules [i, o] =
-  (map sort i <> map sort o)
-  |> nub
-  |> rules
-  |> zip [0..]
-
-translate rlz num = filter (\(a, b) -> b == sort num) rlz |> head |> fst
-
-go x@[_, o]= map (translate (getRules x)) o
-
-fromDigits = foldl (\n d -> 10*n + d) 0
-
-part2 xs = map (fromDigits . go) xs |> sum
+part2 :: [[Int]] -> Int
+part2 = sum . map fromDigits
 
 main :: IO ()
-main = readFile "inputs/8" <&> lines >>> map parse >>> part2 >>= print
+main = readFile "inputs/8" <&> lines >>> map (translate . parse) >>> part2 >>= print
