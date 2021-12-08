@@ -1,8 +1,8 @@
-module X8 where
+module X8 (main) where
 
 import Lude
 
-parse = map words . splitOn "|"
+parse = map (map sort . words) . splitOn "|"
 
 getRules codes =
   let one    = numHas [(2 `sides`)]
@@ -21,15 +21,9 @@ getRules codes =
         x `sides` y = length y == x
         numHas ps = head [x | x <- codes, foldl1 (&&) (map ($ x) ps)]
 
-translate [input, output] =
-  let rules = getRules (map sort input <> map sort output)
-      go num = filter (\(a, b) -> b == sort num) rules |> head |> fst
-  in map go output
+translate [in', out] = [v | o <- out, (v, r) <- getRules (in' <> out), o == r]
 
-part1 :: [[Int]] -> Int
-part1 = sum . map length . map (filter (`elem` [1, 7, 4, 8]))
-
-part2 :: [[Int]] -> Int
+-- part1 = sum . map length . map (filter (`elem` [1, 7, 4, 8]))
 part2 = sum . map fromDigits
 
 main :: IO ()
