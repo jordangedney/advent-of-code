@@ -4,7 +4,7 @@ import Lude
 
 parse = map words . splitOn "|"
 
-getRule codes =
+getRules codes =
   let one    = numHas [(2 `sides`)]
       seven  = numHas [(3 `sides`)]
       four   = numHas [(4 `sides`)]
@@ -22,7 +22,7 @@ getRule codes =
         numHas ps = head [x | x <- codes, foldl1 (&&) (map ($ x) ps)]
 
 translate [input, output] =
-  let rules = getRule (map sort input <> map sort output)
+  let rules = getRules (map sort input <> map sort output)
       go num = filter (\(a, b) -> b == sort num) rules |> head |> fst
   in map go output
 
