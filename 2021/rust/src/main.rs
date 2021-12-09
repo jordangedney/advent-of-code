@@ -1,3 +1,3 @@
-mod x1;
+mod x2;
 
-fn main() { x1::do_main(); }
+fn main() { x2::do_main(); }

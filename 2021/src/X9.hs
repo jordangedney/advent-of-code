@@ -12,9 +12,9 @@ minima grid point =
   |> foldl1 min
   |> (\lowestNeighbor -> (grid M.! point) < lowestNeighbor)
 
-minimaList grid = M.keys grid |> filter (minima grid)
-
 mapFilter grid pred points = [p | p <- points, any pred (M.lookup p grid)]
+
+minimaList grid = mapFilter (minima grid) (M.keys grid)
 
 basin grid minima' =
   let go seen [] = seen
