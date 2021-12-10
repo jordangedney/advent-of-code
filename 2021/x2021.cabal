@@ -10,7 +10,7 @@ executable x2021
 
     other-modules:
         Lude
-        X9
+        X10
 
     build-depends:
         base ^>= 4.16.0.0
