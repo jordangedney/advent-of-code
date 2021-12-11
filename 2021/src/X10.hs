@@ -2,7 +2,6 @@ module X10 (main) where
 
 import Lude
 import qualified Data.Map as M
-import Control.Monad (forM_)
 
 data Symbol = LParen | RParen | LSqrBr | RSqrBr | LCrlBr | RCrlBr | LAngBr | RAngBr
   deriving (Show, Eq)
@@ -17,47 +16,28 @@ parse = map $ \case
   '<' -> LAngBr
   '>' -> RAngBr
 
-removeInner [] = []
-removeInner (LParen:RParen:xs) = removeInner xs
-removeInner (LSqrBr:RSqrBr:xs) = removeInner xs
-removeInner (LCrlBr:RCrlBr:xs) = removeInner xs
-removeInner (LAngBr:RAngBr:xs) = removeInner xs
-removeInner (x:xs) = x : removeInner xs
+removeInner = \case
+  []                 -> []
+  (LParen:RParen:xs) -> removeInner xs
+  (LSqrBr:RSqrBr:xs) -> removeInner xs
+  (LCrlBr:RCrlBr:xs) -> removeInner xs
+  (LAngBr:RAngBr:xs) -> removeInner xs
+  (x:xs)             -> x : removeInner xs
 
-doFixed fn input = input : go [input] input
-  where go seen in' =
-          let r = fn in'
-          in if r `elem` seen then [] else r : go (r:seen) r
+takeWhileUnique ys = go [] ys
+  where go seen (x:xs) = if x `elem` seen then [] else x : (go (x:seen)) xs
 
-score = \case
-  LParen -> 3
-  RParen -> 3
-  LSqrBr -> 57
-  RSqrBr -> 57
-  LCrlBr -> 1197
-  RCrlBr -> 1197
-  LAngBr -> 25137
-  RAngBr -> 25137
+doFixed fn start = takeWhileUnique $ iterate fn start
 
-score' = \case
-  LParen -> 1
-  RParen -> 1
-  LSqrBr -> 2
-  RSqrBr -> 2
-  LCrlBr -> 3
-  RCrlBr -> 3
-  LAngBr -> 4
-  RAngBr -> 4
-
-finalScore s [] = s
-finalScore s (x:xs) = finalScore (s * 5 + (score' x)) xs
+score1 = \case { RParen -> 3; RSqrBr -> 57; RCrlBr -> 1197; RAngBr -> 25137; }
+score2 = \case { LParen -> 1; LSqrBr -> 2;  LCrlBr -> 3;    LAngBr -> 4;     }
 
 part1 xs =
   map (doFixed removeInner) xs
   |> map last
   |> map (filter (`elem` [RParen, RSqrBr, RCrlBr, RAngBr]))
   |> filter (not . null)
-  |> map (score . head)
+  |> map (score1 . head)
   |> sum
 
 part2 xs =
@@ -65,24 +45,8 @@ part2 xs =
   |> map last
   |> filter (\ys -> not $ foldr1 (||) (map (`elem` [RParen, RSqrBr, RCrlBr, RAngBr]) ys))
   |> map reverse
-  |> map (finalScore 0)
+  |> map (foldl (\l r -> l * 5 + (score2 r)) 0)
   |> sort
   |> (\x -> x !! ((length x - 1) `div` 2))
 
-
 main = readFile "inputs/10" <&> lines >>> map parse >>> part2 >>= print
-
-printLst xs = do
-  forM_ xs $ \x -> do
-    print x
-
--- printSym xs = map toChar xs >>= print
-toChar = \case
-  LParen -> '('
-  RParen -> ')'
-  LSqrBr -> '['
-  RSqrBr -> ']'
-  LCrlBr -> '{'
-  RCrlBr -> '}'
-  LAngBr -> '<'
-  RAngBr -> '>'
