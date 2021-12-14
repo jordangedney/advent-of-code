@@ -24,11 +24,6 @@ removeInner = \case
   (LAngBr:RAngBr:xs) -> removeInner xs
   (x:xs)             -> x : removeInner xs
 
-takeWhileUnique ys = go [] ys
-  where go seen (x:xs) = if x `elem` seen then [] else x : (go (x:seen)) xs
-
-doFixed fn start = takeWhileUnique $ iterate fn start
-
 score1 = \case { RParen -> 3; RSqrBr -> 57; RCrlBr -> 1197; RAngBr -> 25137; }
 score2 = \case { LParen -> 1; LSqrBr -> 2;  LCrlBr -> 3;    LAngBr -> 4;     }
 

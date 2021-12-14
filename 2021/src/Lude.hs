@@ -23,7 +23,9 @@ module Lude
   , fromDigits
   , readInt
   , catMaybes
+  , mApply
   , M.findWithDefault
+  , doFixed
   , (|>)
   , (<|)
   , (>>>)
@@ -86,6 +88,13 @@ fromDigits = foldl (\n d -> 10*n + d) 0
 readInt :: String -> Int
 readInt = read
 
+takeWhileUnique :: (Eq a) => [a] -> [a]
+takeWhileUnique ys = go [] ys
+  where go seen (x:xs) = if x `elem` seen then [] else x : (go (x:seen)) xs
+
+doFixed :: (Eq a) => (a -> a) -> a -> [a]
+doFixed fn start = takeWhileUnique $ iterate fn start
+
 -- Grid Code: ------------------------------------------------------------------
 type Point = (Int, Int)
 
@@ -108,4 +117,7 @@ neighbors (x, y) = [(x, y - 1), (x + 1, y), (x, y + 1), (x - 1, y)]
 -- If your grid is a topleft to bottomright style:
 positivePoints :: [Point] -> [Point]
 positivePoints xs = [a | a@(x, y) <- xs, x >= 0, y >= 0]
+
+mApply :: (Ord a) => (b -> b) -> [a] -> Map a b -> Map a b
+mApply fn xs g = foldr (\p m -> M.adjust fn p m) g xs
 --------------------------------------------------------------------------------
