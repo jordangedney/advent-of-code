@@ -1,7 +1,6 @@
 module X12 (main) where
 
 import Lude
-import qualified Data.Map as M
 import Data.Char (isUpper)
 
 parse xs =
@@ -10,39 +9,29 @@ parse xs =
   |> foldl (\m [from, to] -> M.insertWith (++) from [to] m) M.empty
   |> M.map (sort . nub)
 
-pathDone :: [String] -> Bool
-pathDone = (== "end") . head . reverse
-
-part1 cave = doFixed hack [["start"]] |> last |> length
+search visitable except cave = doFixed hack [["start"]] |> last |> length
   where go [] = [[]]
         go (p:paths) =
           if pathDone p then [p] ++ go paths
           else let n = last p
-                   newPaths = [p ++ [x] | x <- toVisit n p]
+                   newPaths = [p ++ [x] | x <- toVisit n p, except x]
                in newPaths ++ go paths
         toVisit n path = filter (visitable path) $ cave M.! n
-        visitable path y@(x:_) = isUpper x || y `notElem` path
-
         hack ps = filter (not . null) (go ps)
+        pathDone = (== "end") . head . reverse
 
-hasDoubles [] = False
-hasDoubles (p:ps) = p `elem` ps || hasDoubles ps
+part1 = search v (const True)
+  where v path y@(x:_) = isUpper x || y `notElem` path
 
-justSmall = filter (not . isUpper . head)
+part2 cave = search canVisit (/= "start")
+  where hasDoubles [] = False
+        hasDoubles (p:ps) = p `elem` ps || hasDoubles ps
 
-canVisit nodes y@(x:_) = isUpper x ||
-                   if (hasDoubles . justSmall $ nodes) then y `notElem` nodes
-                   else True
+        justSmall = filter (not . isUpper . head)
 
-part2 cave = doFixed hack [["start"]] |> last |> length
-  where go [] = [[]]
-        go (p:paths) =
-          if pathDone p then [p] ++ go paths
-          else let n = last p
-                   newPaths = [p ++ [x] | x <- toVisit n p, x /= "start"]
-               in newPaths ++ go paths
-        toVisit n path = filter (canVisit path) $ cave M.! n
-        hack ps = filter (not . null) (go ps)
+        canVisit nodes y@(x:_) =
+          isUpper x || if (hasDoubles . justSmall $ nodes) then y `notElem` nodes
+                       else True
 
 main :: IO ()
 main = readFile "inputs/12" <&> lines >>> parse >>> part2 >>= print
