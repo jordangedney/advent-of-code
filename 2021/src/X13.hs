@@ -1,8 +1,6 @@
 module X13 (main) where
 
 import Lude
--- import qualified Data.Map as M
-import Control.Monad (forM, forM_)
 
 data Fold = X Int | Y Int deriving (Show, Eq)
 
