@@ -18,6 +18,7 @@ module Lude
   , splitOn
   , frequencies
   , range
+  , count
   , sort
   , nub
   , fromDigits
@@ -81,6 +82,9 @@ frequencies = foldr (\l r -> M.insertWith (+) l 1 r) []
 range :: Int -> Int -> [Int]
 range a b | a > b = reverse [b..a]
           | otherwise = [a..b]
+
+count :: [Int] -> Int -> Int
+xs `count` x = length (filter (== x) xs)
 
 fromDigits :: [Int] -> Int
 fromDigits = foldl (\n d -> 10*n + d) 0
