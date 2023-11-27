@@ -18,10 +18,12 @@ common warnings
 executable advent
     import:           warnings
     -- main-is:          Main.hs
-    main-is:          X1.hs
+    main-is:          X2.hs
     other-modules:    Lude
     -- other-extensions:
-    build-depends:    base ^>=4.18.1.0
+    build-depends:
+                      base ^>=4.17.2.0
+                      --base ^>=4.18.1.0
                     , split
                     , sort
                     , containers
