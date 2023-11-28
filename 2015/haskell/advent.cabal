@@ -18,7 +18,7 @@ common warnings
 executable advent
     import:           warnings
     -- main-is:          Main.hs
-    main-is:          X4.hs
+    main-is:          X5.hs
     other-modules:    Lude
 
     -- other-extensions:
