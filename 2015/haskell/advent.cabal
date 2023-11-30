@@ -18,7 +18,7 @@ common warnings
 executable advent
     import:           warnings
     -- main-is:          Main.hs
-    main-is:          X6.hs
+    main-is:          X7.hs
     other-modules:    Lude
 
     -- other-extensions:
@@ -30,11 +30,15 @@ executable advent
                     , vector
                     , cryptonite
                     , bytestring
+                    , text
+                    , megaparsec
+                    , lens
 
     default-extensions:
         LambdaCase
       , ScopedTypeVariables
       , NoImplicitPrelude
+      , OverloadedStrings
 
     hs-source-dirs:   app
     default-language: GHC2021
