@@ -18,6 +18,7 @@ module Lude ( module P
             , rights
             , lefts
 
+            , Parser
             , Void) where
 
 import Prelude as P hiding (map)
@@ -39,6 +40,8 @@ import Data.Sort (sort)
 import Data.Maybe (catMaybes, mapMaybe)
 import Text.Read (readMaybe)
 import Data.Either (rights, lefts)
+
+type Parser = Parsec Void String
 
 map :: Functor f => (a -> b) -> f a -> f b
 map = fmap

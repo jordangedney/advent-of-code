@@ -40,7 +40,6 @@ main = do
   print $ sum validIds
 
   -- part two
-  let sorted = map (reverse . sort . concat) parsed
-      getMax c xs = filter (\(l, r) -> c == l) xs & head & snd
-      highestDice xs = [getMax R xs, getMax G xs, getMax B xs]
-  print $ sorted & map (product . highestDice) & sum
+  let getMax c xs = filter ((== c) . fst) xs & map snd & maximum
+      highestDice xs = [getMax c xs | c <- [R, G, B]]
+  print $ parsed & map concat & map (product . highestDice) & sum

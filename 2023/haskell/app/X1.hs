@@ -1,8 +1,6 @@
 import Lude
 import Data.Char (isAlpha)
 
-type Parser = Parsec Void String
-
 wordMap = \case
   "one"   -> "1"
   "two"   -> "2"
