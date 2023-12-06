@@ -23,7 +23,6 @@ almanac = do
                , "humidity-to-location"]
   pure (seeds, tables)
 
-
 main :: IO ()
 main = do
   let input = testInput
@@ -39,7 +38,7 @@ main = do
               in if inTable then Just (input + distance) else Nothing
         in head $ mapMaybe (($ input) . translate) rules ++ [input]
 
-      seedToLocation = foldr (.) id (reverse [mkTranslationFn rs | rs <- map snd rules])
+      seedToLocation = foldr (.) id (reverse [mkTranslationFn rs | rs <- rules])
       locations = map seedToLocation seeds
   print $ minimum locations
 
