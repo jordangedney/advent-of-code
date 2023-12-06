@@ -2,6 +2,7 @@ module Lude ( module P
             , module Text.Megaparsec
             , module Text.Megaparsec.Char
             , module Control.Lens
+            , module Debug.Trace
 
             , map
 
@@ -25,6 +26,7 @@ import Prelude as P hiding (map)
 import Text.Megaparsec hiding (noneOf)
 import Text.Megaparsec.Char
 import Control.Lens
+import Debug.Trace
 
 -- import qualified Data.Map.Strict as Map
 -- import qualified Data.Vector as Vector
