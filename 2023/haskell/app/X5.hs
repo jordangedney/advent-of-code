@@ -2,33 +2,26 @@ import Lude
 import Control.Applicative (liftA3)
 import Data.List.Split (chunksOf)
 
-data Material = 
-  Seed | Soil | Fertilizer | Water | Light | Temperature | Humidity | Location
-  deriving (Eq, Show)
-
-dataTable = [ (Seed,        Soil,        "seed-to-soil")
-            , (Soil,        Fertilizer,  "soil-to-fertilizer")
-            , (Fertilizer,  Water,       "fertilizer-to-water")
-            , (Water,       Light,       "water-to-light")
-            , (Light,       Temperature, "light-to-temperature")
-            , (Temperature, Humidity,    "temperature-to-humidity")
-            , (Humidity,    Location,    "humidity-to-location")]
-tableTypes = map (\(x, y, _) -> (x, y)) dataTable
-tableLabels = map (\(_, _, x) -> x) dataTable
-
 entry :: Parser Int
 entry = read <$> some digitChar <* many (char ' ')
 
 parseMap :: String -> Parser [(Int, Int, Int)]
-parseMap mapName = 
+parseMap mapName =
   let entries = liftA3 (,,) entry entry entry <* newline
   in string (mapName <> " map:\n") *> some entries <* many newline
 
-almanac :: Parser ([Int], [((Material, Material), [(Int, Int, Int)])])
-almanac = do 
+almanac :: Parser ([Int], [[(Int, Int, Int)]])
+almanac = do
   seeds <- string "seeds: " >> some entry <* newline <* newline
-  tables  <- mapM parseMap tableLabels
-  pure (seeds, zip tableTypes tables)
+  tables  <- mapM parseMap
+               [ "seed-to-soil"
+               , "soil-to-fertilizer"
+               , "fertilizer-to-water"
+               , "water-to-light"
+               , "light-to-temperature"
+               , "temperature-to-humidity"
+               , "humidity-to-location"]
+  pure (seeds, tables)
 
 
 main :: IO ()
@@ -39,14 +32,14 @@ main = do
   -- part one
   let [(seeds, rules)] = [parse almanac "" input] & rights
 
-      mkTranslationFn rules input = 
+      mkTranslationFn rules input =
         let translate (destination, source, len) input =
               let distance = destination - source
                   inTable = source <= input && input <= (source + len - 1)
               in if inTable then Just (input + distance) else Nothing
         in head $ mapMaybe (($ input) . translate) rules ++ [input]
 
-      seedToLocation = foldr (.) id (reverse [mkTranslationFn rs | rs <- map snd rules]) 
+      seedToLocation = foldr (.) id (reverse [mkTranslationFn rs | rs <- map snd rules])
       locations = map seedToLocation seeds
   print $ minimum locations
 
@@ -55,7 +48,7 @@ main = do
       seeds' = chunksOf 2 seeds
       isSeed i = or [l <= i && i <= (l + r) |  [l, r] <- seeds']
 
-      mkTranslationFn rules input = 
+      mkTranslationFn rules input =
         let translate (destination, source, len) input =
               let distance = destination - source
                   estimate = input - distance
@@ -63,7 +56,7 @@ main = do
               in if inTable then Just (input - distance) else Nothing
         in head $ mapMaybe (($ input) . translate) rules ++ [input]
 
-      locationToSeed = foldr (.) id [mkTranslationFn rs | rs <- map snd rules] 
+      locationToSeed = foldr ((.) . mkTranslationFn) id rules
 
   print $ head $ [x | x <- [1..], isSeed (locationToSeed x)]
 
