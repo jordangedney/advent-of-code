@@ -5,6 +5,8 @@ module Lude ( module P
             , module Debug.Trace
 
             , map
+            , entry
+            , ws
 
             -- , (&)
             -- , (|>)
@@ -50,6 +52,12 @@ map = fmap
 
 readInt :: String -> Maybe Int
 readInt = readMaybe
+
+entry :: Parser Int
+entry = read <$> some digitChar <* many (char ' ')
+
+ws :: Parser String
+ws = many $ char ' '
 
 -- (|>) :: (a -> b) -> (b -> c) -> a -> c
 -- (|>) f g a = g (f a)
