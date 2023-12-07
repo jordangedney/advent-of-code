@@ -7,6 +7,8 @@ module Lude ( module P
             , map
             , entry
             , ws
+            , numOf
+            , frequencies
 
             -- , (&)
             -- , (|>)
@@ -30,7 +32,7 @@ import Text.Megaparsec.Char
 import Control.Lens
 import Debug.Trace
 
--- import qualified Data.Map.Strict as Map
+import qualified Data.Map.Strict as Map
 -- import qualified Data.Vector as Vector
 -- import qualified Data.Set as Set
 
@@ -58,6 +60,12 @@ entry = read <$> some digitChar <* many (char ' ')
 
 ws :: Parser String
 ws = many $ char ' '
+
+numOf :: Eq a => a -> [a] -> Int
+numOf x xs = filter (== x) xs & length 
+
+frequencies :: (Foldable t, Ord a) => t a -> Map.Map a Int
+frequencies = foldr (\l r -> Map.insertWith (+) l 1 r) Map.empty
 
 -- (|>) :: (a -> b) -> (b -> c) -> a -> c
 -- (|>) f g a = g (f a)
