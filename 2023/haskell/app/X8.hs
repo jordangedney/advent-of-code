@@ -1,7 +1,6 @@
 import Lude
 import qualified Data.Map.Strict as Map
 import Data.Maybe (fromJust)
-import Data.Vector.Generic (forM_)
 
 network :: Parser (String, (String, String))
 network = do
@@ -19,37 +18,27 @@ main = do
 
   -- part one
   let directions = head input & map (\case 'R' -> R; _ -> L )
-      parsed = map (parse network "") (drop 2 input) & rights
-             & Map.fromList
-      move L m i = Map.lookup i m & fromJust & fst
-      move R m i = Map.lookup i m & fromJust & snd
+      parsed = map (parse network "") (drop 2 input) & rights & Map.fromList
+
+      move dir m i = Map.lookup i m & fromJust & (case dir of L -> fst; R -> snd;)
+
       go (d:ds) m pos goal steps = 
         if pos == goal then steps
         else go ds m (move d m pos) goal (steps + 1)
-  -- print $ go (cycle directions) parsed "AAA" "ZZZ" 0
+
+  print $ go (cycle directions) parsed "AAA" "ZZZ" 0
 
   -- part two
-  let starts = sort [k | k@[_, _, x] <- Map.keys parsed, x == 'A']
-      takeUntilRepeat ys = tUR ys []
-        where tUR (x:xs) seen = if x `elem` seen then reverse seen else tUR xs (x:seen)
+  let starts = Map.keys parsed & filter ((== 'A') . last)
 
-      doMove m [] pos = [pos]
-      doMove m (d:ds) pos = 
-        let nPos = move d m pos
-        in nPos : doMove m ds nPos
-  --print $ takeUntilRepeat [1, 2, 3, 4, 2, 3, 4]
-  -- print $ takeUntilRepeat (doMove parsed (cycle directions) "11A")
-      seq str = doMove parsed (cycle directions) str & zip [1..] & filter (\(_, y) -> last y == 'Z')
+      followPath start = scanl (\pos dir -> move dir parsed pos) start (cycle directions)
 
-  print $ starts
-  let x = [take 10 $ seq s | s <- starts]
-  mapM_ print x
-  let y = map (map fst) x
-  print y
+      stepsUntilZNodes start = followPath start & zip [1..] & filter (\(_, y) -> last y == 'Z')
 
-  let z = [map (\(a, b) -> b - a) (zip xs (tail xs)) | xs <- y]
-  print $ map last z & foldl1 lcm
+      posOfStartAndEndOfCycle = map (map fst . take 2 . stepsUntilZNodes) starts
+      stepsInCycle = [b - a | [a, b] <- posOfStartAndEndOfCycle]
 
+  print $ foldl1 lcm stepsInCycle
 
 input1 =
   [ "RL"
