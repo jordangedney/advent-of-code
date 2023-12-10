@@ -23,7 +23,6 @@ main = do
   -- part two
   let getPrev xs = 
         if all (== 0) (differences xs) then head xs
-        -- else traceShow (xs) $ last xs + getNext (differences xs)
         else head xs - getPrev (differences xs)
 
   print $ map getPrev parsed & sum
