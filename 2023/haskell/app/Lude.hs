@@ -56,12 +56,11 @@ import Data.Void (Void)
 -- import Data.Function ((&))
 import Control.Monad ((>=>))
 import Data.List (transpose, nub)
-import Data.List.Split (splitOn)
 import Data.Sort (sort)
 import Data.Maybe (catMaybes, mapMaybe, fromJust)
 import Text.Read (readMaybe)
 import Data.Either (rights, lefts)
-import Data.List.Split (chunksOf)
+import Data.List.Split (chunksOf, splitOn)
 
 type Parser = Parsec Void String
 
