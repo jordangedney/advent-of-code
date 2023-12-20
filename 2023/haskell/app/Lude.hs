@@ -87,6 +87,12 @@ insertAt :: a -> [a] -> Int -> [a]
 insertAt x ys i = case splitAt i ys of
     (before, after) -> before ++ [x] ++ after
 
+takeUntilRepeat :: Ord a => [a] -> a
+takeUntilRepeat xs = go Set.empty xs
+  where go seen (x:xs) = 
+          if Set.member x seen then x else go (Set.insert x seen) xs
+
+
 -- Grid code -------------------------------------------------------
 type Coord = (Int, Int)
 type Grid a = Map.Map Coord a
