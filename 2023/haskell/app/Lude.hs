@@ -12,6 +12,7 @@ module Lude ( module P
             , insertAt
 
             , Grid
+            , Coord
             , mkGrid
             , right
             , left
@@ -87,7 +88,8 @@ insertAt x ys i = case splitAt i ys of
     (before, after) -> before ++ [x] ++ after
 
 -- Grid code -------------------------------------------------------
-type Grid a = Map.Map (Int, Int) a
+type Coord = (Int, Int)
+type Grid a = Map.Map Coord a
 
 mkGrid :: [[a]] -> Grid a
 mkGrid xss = Map.fromList
