@@ -7,6 +7,7 @@ module Lude ( module P
             , map
             , entry
             , ws
+            , parseWithMap
             , numOf
             , frequencies
             , insertAt
@@ -21,7 +22,9 @@ module Lude ( module P
             , cross
             , corners
             , adjacents
-            , printMap
+            , printMapWithModifier
+            , printCharMap
+            , undoParse
             , bfs
             , shortestPath
 
@@ -38,6 +41,8 @@ module Lude ( module P
             , rights
             , lefts
             , chunksOf
+            , comparing
+            , maximumBy
 
             , Parser
             , Void) where
@@ -62,6 +67,8 @@ import Data.Maybe (catMaybes, mapMaybe, fromJust)
 import Text.Read (readMaybe)
 import Data.Either (rights, lefts)
 import Data.List.Split (chunksOf, splitOn)
+import Data.Ord (comparing)
+import Data.Foldable (maximumBy)
 
 type Parser = Parsec Void String
 
@@ -77,8 +84,10 @@ entry = read <$> some digitChar <* many (char ' ')
 ws :: Parser String
 ws = many $ char ' '
 
+parseWithMap m = choice [ p <$ char c | (p, c) <- m ]
+
 numOf :: Eq a => a -> [a] -> Int
-numOf x xs = filter (== x) xs & length 
+numOf x xs = filter (== x) xs & length
 
 frequencies :: (Foldable t, Ord a) => t a -> Map.Map a Int
 frequencies = foldr (\l r -> Map.insertWith (+) l 1 r) Map.empty
@@ -89,7 +98,7 @@ insertAt x ys i = case splitAt i ys of
 
 takeUntilRepeat :: Ord a => [a] -> a
 takeUntilRepeat xs = go Set.empty xs
-  where go seen (x:xs) = 
+  where go seen (x:xs) =
           if Set.member x seen then x else go (Set.insert x seen) xs
 
 
@@ -111,13 +120,21 @@ cross   x = [f x | f <- [right, left, up, down]]
 corners x = [f x | f <- [right . up, right . down, left . up, left . down]]
 adjacents x = cross x ++ corners x
 
-printMap m = 
-  let mapToString m =
-        let len = last [y | ((x, y), _) <- Map.toAscList m, x == 0]
-            chunked = chunksOf (len + 1) (Map.toAscList m)
-        --in map (map show) chunked
-        in map (map snd) chunked
-  in mapM_ putStrLn (mapToString  m)
+printMapWithModifier fn m =
+  let len = last [y | ((x, y), _) <- Map.toAscList m, x == 0]
+      chunked = chunksOf (len + 1) (Map.toAscList m)
+      asString = map (concatMap fn) chunked
+  in putStrLn "" >> mapM_ putStrLn asString
+
+printCharMap :: Grid Char -> IO ()
+printCharMap = printMapWithModifier (\x -> [snd x])
+
+undoParse' :: Eq a => [(a, Char)] -> a -> Char
+undoParse' ts x = head [z | (y, z) <- ts, x == y]
+
+undoParse ts = (:[]) . undoParse' ts . snd
+
+-- printShowValMap = printMapWithModifier (\(_, v) -> show v ++ " ")
 
 bfs :: Grid a -> ((Int, Int) -> [(Int, Int)]) -> (Int, Int) -> (Int, Int) -> [(Int, Int)]
 bfs grid getAdj start end = go [start] (Set.singleton start) []
@@ -130,10 +147,10 @@ bfs grid getAdj start end = go [start] (Set.singleton start) []
 shortestPath :: Grid a -> ((Int, Int) -> [(Int, Int)]) -> (Int, Int) -> (Int, Int) -> [(Int, Int)]
 shortestPath grid getAdj start end = go [(start, Nothing)] Set.empty Map.empty
   where go [] _ _ = []
-        go ((p, prev):ps) visited predecessors 
+        go ((p, prev):ps) visited predecessors
           | p == end = reverse $ reconstructPath predecessors p
           | Set.member p visited = go ps visited predecessors
-          | otherwise = 
+          | otherwise =
               let neighbors = [(n, Just p) | n <- getAdj p, Set.notMember n visited, Map.member n grid]
                   newVisited = Set.insert p visited
                   newPredecessors = foldr (\(n, p') acc -> Map.insert n p' acc) predecessors neighbors
