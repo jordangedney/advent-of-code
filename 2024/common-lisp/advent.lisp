@@ -13,6 +13,17 @@
 
 ;; helpers ---------------------------------------------------------------------
 
+(defun average (&rest vals) (/ (apply #'+ vals) (length vals)))
+
+(defun any? (lst) (some #'identity lst))
+
+(defun sorted (lst pred) (sort (copy-list lst) pred))
+
+(defun pair-consecutive (xs) (zip xs (cdr xs)))
+
+(defun get-input (number)
+  (a:read-file-into-string (format nil "input/~a" (write-to-string number))))
+
 (defmacro -> (&rest args) `(arrows:-<> ,@args))
 (defmacro ->> (&rest args) `(arrows:-<>> ,@args))
 
@@ -50,6 +61,8 @@
      (cons (list x y) (zip xs* ys*)))
     ((list _ _) nil)))
 
+(defun lines (input) (uiop:split-string (strip input) :separator uiop:+lf+))
+
 ;; day 1 -----------------------------------------------------------------------
 (setf test "
   3   4
@@ -82,7 +95,54 @@
         (right (rhs input)))
     (loop for ele in left summing (* ele (count ele right)))))
 
-; (-> (a:read-file-into-string "input/1") parsed part-two)
+;; (-> (a:read-file-into-string "input/1") parsed part-two)
 
+;; day 2 -----------------------------------------------------------------------
+(setq test "
+7 6 4 2 1
+1 2 7 8 9
+9 7 6 2 1
+1 3 2 4 5
+8 6 4 4 1
+1 3 6 7 9
+")
 
+(defun parsed (input)
+  (mapcar (lambda (x) (->> x words (mapcar #'parse-integer)))
+          (lines input)))
 
+(defun all-increasing? (report) (equalp report (sorted report #'<)))
+(defun all-decreasing? (report) (equalp report (sorted report #'>)))
+
+(defun differences-are-close? (report)
+  (let ((step-size (mapcar (lambda (x) (apply #'distance x))
+                            (pair-consecutive report))))
+    (and (<= (apply #'max step-size) 3)
+         (>= (apply #'min step-size) 1))))
+
+(defun safe? (report)
+  (and (or (all-increasing? report)
+           (all-decreasing? report))
+       (differences-are-close? report)))
+
+(defun part-one (in)
+  (->> (parsed in)
+       (remove-if-not #'safe?)
+       length))
+
+;; (part-one (get-input 2))
+
+(defun without (lst index)
+  (append (subseq lst 0 index) (subseq lst (1+ index))))
+
+(defun mostly-safe? (report)
+  (->> (loop for _ in report for index from 0 collect (without report index))
+       (mapcar #'safe?)
+       any?))
+
+(defun part-two (in)
+  (->> (parsed in)
+       (remove-if-not #'mostly-safe?)
+       length))
+
+;; (part-two (get-input 2))
