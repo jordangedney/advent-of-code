@@ -21,9 +21,6 @@
 
 (defun pair-consecutive (xs) (zip xs (cdr xs)))
 
-(defun get-input (number)
-  (a:read-file-into-string (format nil "input/~a" (write-to-string number))))
-
 (defmacro -> (&rest args) `(arrows:-<> ,@args))
 (defmacro ->> (&rest args) `(arrows:-<>> ,@args))
 
@@ -62,6 +59,20 @@
     ((list _ _) nil)))
 
 (defun lines (input) (uiop:split-string (strip input) :separator uiop:+lf+))
+
+(defun get-input (day-num)
+  (let ((input-file-name (format nil "input/~a" day-num)))
+    (if (probe-file input-file-name) (a:read-file-into-string input-file-name)
+
+        ;; If the input isn't on disk, curl it
+        (let* ((cur-dir (strip (uiop:run-program "pwd" :output 'string)))
+               (url (format nil "https://adventofcode.com/2024/day/~a/input"
+                            day-num))
+               (cookie (strip (a:read-file-into-string ".cookie")))
+               (curl-cmd (format nil "curl -b session=~a ~a -o ~a/input/~a"
+                                 cookie url cur-dir day-num)))
+          (uiop:run-program curl-cmd :output 'string)
+          (a:read-file-into-string input-file-name)))))
 
 ;; day 1 -----------------------------------------------------------------------
 (setf test "
@@ -146,3 +157,8 @@
        length))
 
 ;; (part-two (get-input 2))
+
+;; day 3 -----------------------------------------------------------------------
+
+(setq test
+"xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))")
