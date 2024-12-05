@@ -345,3 +345,77 @@ MXMXAXMASX")
             count (is-xmas? grid key))))
 
 ;; (part-two (get-input 4))
+
+;; day 5 -----------------------------------------------------------------------
+
+(setq test "
+47|53
+97|13
+97|61
+97|47
+75|29
+61|13
+75|53
+29|13
+97|29
+53|29
+61|53
+97|53
+61|29
+47|13
+75|47
+97|75
+47|61
+75|61
+47|29
+75|13
+53|13
+
+75,47,61,53,29
+97,61,53,29,13
+75,29,13
+75,97,47,61,53
+61,13,29
+97,13,75,29,47")
+
+(defun parsed (input)
+  (destructuring-bind (rules updates)
+      (split-on (coerce '(#\Newline #\Newline) 'string) input)
+    (list
+     (->> rules
+          lines
+          (mapcar (lambda (x) (->> (split-on "|" x) (mapcar #'parse-integer))))
+          (reduce (lambda (hash-map pair)
+                    (setf (gethash (car pair) hash-map)
+                          (append (gethash (car pair) hash-map nil)
+                                  (cdr pair)))
+                    hash-map)
+                  <>
+                  :initial-value (make-hash-table)))
+
+     (->> updates
+          lines
+          (mapcar (lambda (x) (->> (split-on "," x) (mapcar #'parse-integer))))))))
+
+(defun update-valid? (rules update)
+  (if (eq update nil) 't
+      (let* ((afters (gethash (car update) rules nil))
+             (befores (cdr update)))
+        (if (eq (intersection befores afters) nil)
+            (update-valid? rules befores)
+            nil))))
+
+(defun valid-updates (rules updates)
+  (loop for update in updates
+        if (update-valid? rules (reverse update))
+          collect update))
+
+(defun middle-number (lst) (nth (/ (- (length lst) 1) 2) lst))
+
+(defun part-one (input)
+  (destructuring-bind (rules updates) (parsed input)
+    (->> (valid-updates rules updates)
+         (mapcar #'middle-number)
+         (apply #'+))))
+
+;; (part-one (get-input 5))
