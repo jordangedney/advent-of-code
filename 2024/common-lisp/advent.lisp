@@ -392,7 +392,6 @@ MXMXAXMASX")
                     hash-map)
                   <>
                   :initial-value (make-hash-table)))
-
      (->> updates
           lines
           (mapcar (lambda (x) (->> (split-on "," x) (mapcar #'parse-integer))))))))
@@ -419,3 +418,17 @@ MXMXAXMASX")
          (apply #'+))))
 
 ;; (part-one (get-input 5))
+
+(defun comes-before? (rules x y) (member y (gethash x rules nil)))
+
+(defun part-two (input)
+  (destructuring-bind (rules updates) (parsed input)
+    (loop for (orig sorted) in (mapcar (lambda (x)
+                                         (list x (sorted x (a:curry #'comes-before? rules))))
+                                       updates)
+          when (not (equal orig sorted))
+            sum  (middle-number sorted))))
+
+;; (part-two (get-input 5))
+
+
