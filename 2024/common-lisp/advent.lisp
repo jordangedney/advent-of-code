@@ -245,3 +245,103 @@
            (reverse result))))
 
 ;; (part-two (get-input 3))
+
+;; day 4 -----------------------------------------------------------------------
+
+(setq test "
+MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX")
+
+(defun add-indicies (input)
+  (loop for line in (lines input)
+        for y from 0
+        append (loop for ele across line
+                     for x from 0
+                     collect (list (list x y) ele))))
+
+(defun parse-to-grid (input)
+  (let ((grid (make-hash-table :test 'equal)))
+    (loop for (pos val) in (add-indicies input)
+          do (setf (gethash pos grid) val))
+    grid))
+
+(defun adjacents (pos)
+  (destructuring-bind (x y) pos
+    (list (list (list (+ x 1) y) ; forwards
+                (list (+ x 2) y)
+                (list (+ x 3) y))
+          (list (list (- x 1) y) ; backwards
+                (list (- x 2) y)
+                (list (- x 3) y))
+          (list (list x (+ y 1)) ; down
+                (list x (+ y 2))
+                (list x (+ y 3)))
+          (list (list x (- y 1)) ; up
+                (list x (- y 2))
+                (list x (- y 3)))
+          (list (list (+ x 1) (+ y 1)) ; lower right
+                (list (+ x 2) (+ y 2))
+                (list (+ x 3) (+ y 3)))
+          (list (list (+ x 1) (- y 1)) ; upper right
+                (list (+ x 2) (- y 2))
+                (list (+ x 3) (- y 3)))
+          (list (list (- x 1) (+ y 1))  ; lower left
+                (list (- x 2) (+ y 2))
+                (list (- x 3) (+ y 3)))
+          (list (list (- x 1) (- y 1)) ; upper left
+                (list (- x 2) (- y 2))
+                (list (- x 3) (- y 3))))))
+
+(defun adjacent-strings (grid pos)
+  (loop for direction in (adjacents pos)
+        collect (coerce (cons (gethash pos grid #\.)
+                              (loop for pos in direction
+                                    collect (gethash pos grid #\.)))
+                        'string)))
+
+(defun part-one (input)
+  (let ((grid (parse-to-grid input)))
+    (/ (length
+        (loop for key being the hash-keys of grid
+              append (loop for search in (adjacent-strings grid key)
+                           if (or (string= "XMAS" search)
+                                  (string= "XMAS" (reverse search)))
+                             collect search)))
+       2)))
+
+;; (part-one (get-input 4))
+
+(defun backslash (pos)
+  (destructuring-bind (x y) pos
+    (list (list (+ x 1) (+ y 1))     ; lower right
+          (list (- x 1) (- y 1))))) ; upper left
+
+(defun forwardslash (pos)
+  (destructuring-bind (x y) pos
+    (list (list (+ x 1) (- y 1))        ; upper right
+          (list (- x 1) (+ y 1)))))     ; lower left
+
+(defun is-ms? (grid ps)
+  (let ((vals (mapcar (lambda (pos) (gethash pos grid #\.)) ps)))
+    (and (member #\M vals)
+         (member #\S vals))))
+
+(defun is-xmas? (grid pos)
+  (and (is-ms? grid (backslash pos))
+       (is-ms? grid (forwardslash pos))))
+
+(defun part-two (input)
+  (let ((grid (parse-to-grid input)))
+    (loop for key being the hash-keys of grid
+          when (char= #\A (gethash key grid #\.))
+            count (is-xmas? grid key))))
+
+;; (part-two (get-input 4))
