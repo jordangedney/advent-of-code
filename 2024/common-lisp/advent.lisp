@@ -431,4 +431,88 @@ MXMXAXMASX")
 
 ;; (part-two (get-input 5))
 
+;; day 6 -----------------------------------------------------------------------
+
+(setq test "
+....#.....
+.........#
+..........
+..#.......
+.......#..
+..........
+.#..^.....
+........#.
+#.........
+......#...")
+
+(defun find-key-by-val (hash-table to-find)
+  (maphash (lambda (k v)
+             (when (equal v to-find)
+               (return-from find-key-by-val k)))
+           hash-table))
+
+(defun parsed (input)
+  (let* ((grid (parse-to-grid input))
+         (guard-pos (find-key-by-val grid #\^)))
+    (setf (gethash guard-pos grid) #\.) ; The guard's spot is free of obstructions
+    (list grid guard-pos :up)))
+
+(defun turn-90 (dir)
+  (match dir
+    (:up    :right)
+    (:right :down)
+    (:down  :left)
+    (:left  :up)))
+
+(defun next-pos (cur-pos dir)
+  (destructuring-bind (x y) cur-pos
+    (match dir
+      (:up    (list x (- y 1)))
+      (:right (list (+ x 1) y ))
+      (:down  (list x (+ y 1)))
+      (:left  (list (- x 1) y)))))
+
+(defun space-open? (c) (char= #\. c))
+
+(defun step-game (grid guard-pos cur-dir)
+  (let ((np (next-pos guard-pos cur-dir)))
+    (multiple-value-bind (next in-grid) (gethash np grid)
+      (if (not in-grid) nil
+          (if (space-open? next)
+              (list grid np cur-dir)
+              (step-game grid guard-pos (turn-90 cur-dir)))))))
+
+(defun run-game (state)
+  (let ((s (apply #'step-game state)))
+    (if s (cons s (run-game s)) nil)))
+
+(defun part-one (input) ;; + 1 ... I assume for the starting pos?
+  (->> (run-game (parsed input))
+       (mapcar #'second)
+       (remove-duplicates <> :test #'equal)
+       length))
+
+;; (part-one (get-input 6))
+
+(defun run-potentially-endless-game (state current-run)
+  (let ((s (apply #'step-game state)))
+    (if (> current-run 10000) '(:loop)
+        (if s (cons s (run-potentially-endless-game s (+ 1 current-run)))))))
+
+(defun run-with-pos-blocked (pos state)
+  (destructuring-bind (grid guard-pos dir) state
+    (let ((orig-val (gethash pos grid)))
+      (setf (gethash pos grid) #\#)
+      (prog1 (run-potentially-endless-game (list grid guard-pos dir) 0)
+        (setf (gethash pos grid) orig-val)))))
+
+(defun part-two (input)
+  (destructuring-bind (grid guard-pos dir) (parsed input)
+    (loop for key being the hash-keys of grid
+          and r = (last (run-with-pos-blocked key (list grid guard-pos dir)))
+          if (equal (car r) :loop)
+            count r)))
+
+;; (part-two (get-input 6))
+
 
