@@ -4,9 +4,9 @@
 (ql:quickload "trivia")
 
 (defpackage #:advent
-  (:use #:cl)
+  (:use #:cl #:trivia)
   (:import-from #:arrows #:-<> #:-<>>)
-  (:import-from #:trivia #:match)
+  ;; (:import-from #:trivia #:match)
   (:local-nicknames (#:a #:alexandria)))
 
 (in-package #:advent)
@@ -515,4 +515,46 @@ MXMXAXMASX")
 
 ;; (part-two (get-input 6))
 
+;; day 7 -----------------------------------------------------------------------
+(setq test "
+190: 10 19
+3267: 81 40 27
+83: 17 5
+156: 15 6
+7290: 6 8 6 15
+161011: 16 10 13
+192: 17 8 14
+21037: 9 7 18 13
+292: 11 6 16 20")
 
+(defun parsed (input)
+  (->> (lines input)
+       (mapcar (lambda (x)
+                 (destructuring-bind (a b) (split-on ":" x)
+                   (list (parse-integer a)
+                         (mapcar #'parse-integer (words b))))))))
+
+(defun mk-expression (xs)
+  (match xs
+    ((list a b) (list (list a ':add b)
+                      (list a ':mul b)))
+    ((cons y ys)
+     (loop for v in (mk-expression ys)
+           append (list (append (list y ':add) v)
+                        (append (list y ':mul) v))))))
+
+(defun do-expression (xs)
+  (labels ((recur (ys acc)
+             (match ys
+               ((list* :add a as) (recur as (+ acc a)))
+               ((list* :mul a as) (recur as (* acc a)))
+               (_ acc))))
+    (recur (cdr xs) (car xs))))
+
+(defun part-one (input)
+  (loop for (test-value vs) in (parsed input)
+        if (any? (loop for exp in (mk-expression vs)
+                       collect (eq test-value (do-expression exp))))
+          sum test-value))
+
+;; (part-one (get-input 7))
