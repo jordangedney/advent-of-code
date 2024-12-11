@@ -558,3 +558,34 @@ MXMXAXMASX")
           sum test-value))
 
 ;; (part-one (get-input 7))
+
+(defun mk-expression (xs)
+  (match xs
+    ((list a b) (list (list a ':add b)
+                      (list a ':mul b)
+                      (list a ':concat b)))
+    ((cons y ys)
+     (loop for v in (mk-expression ys)
+           append (list (append (list y ':add) v)
+                        (append (list y ':concat) v)
+                        (append (list y ':mul) v))))))
+
+(defun concat-op (x y)
+  (parse-integer (concatenate 'string (write-to-string x) (write-to-string y))))
+
+(defun do-expression (xs)
+  (labels ((recur (ys acc)
+             (match ys
+               ((list* :add a as) (recur as (+ acc a)))
+               ((list* :mul a as) (recur as (* acc a)))
+               ((list* :concat a as) (recur as (concat-op acc a)))
+               (_ acc))))
+    (recur (cdr xs) (car xs))))
+
+(defun part-two (input)
+  (loop for (test-value vs) in (parsed input)
+        if (any? (loop for exp in (mk-expression vs)
+                       collect (eq test-value (do-expression exp))))
+          sum test-value))
+
+;; (part-two (get-input 7))
