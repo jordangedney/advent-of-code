@@ -13,6 +13,14 @@
 
 ;; helpers ---------------------------------------------------------------------
 
+(defmethod print-object ((object hash-table) stream)
+  (format stream "#HT{~{~{(~a: ~a)~}~^ ~}}"  (items object)))
+
+(defun items (hash-table)
+  (loop for key being the hash-keys of hash-table
+          using (hash-value value)
+        collect (list key value)))
+
 (defun average (&rest vals) (/ (apply #'+ vals) (length vals)))
 
 (defun any? (lst) (some #'identity lst))
@@ -589,3 +597,69 @@ MXMXAXMASX")
           sum test-value))
 
 ;; (part-two (get-input 7))
+
+;; day 8 -----------------------------------------------------------------------
+(setq test "
+............
+........0...
+.....0......
+.......0....
+....0.......
+......A.....
+............
+............
+........A...
+.........A..
+............
+............")
+
+(defun parsed (input)
+  (let ((g (make-hash-table :test 'equal)))
+    (maphash (lambda (k v)
+               (when (not (equal v #\.))
+                 (setf (gethash v g) (append (gethash v g nil) (list k)))))
+             (parse-to-grid input))
+    g))
+
+(defun pairs (xs)
+  (let (r) (a:map-combinations (lambda (x) (push x r)) xs :length 2) (nreverse r)))
+
+(defun anodes (positions)
+  (destructuring-bind (pos1 pos2) positions
+    (list
+     (mapcar #'+ pos1 (mapcar #'- pos1 pos2))
+     (mapcar #'+ pos2 (mapcar #'- pos2 pos1)))))
+
+(defun anode-map (input)
+  (let ((frequencies (parsed input))
+        (indicies (parse-to-grid input)))
+    (loop for (k v) in (items frequencies)
+          collect (list k (->> (pairs v)
+                               (mapcan #'anodes)
+                               (remove-duplicates <> :test #'equal)
+                               (remove-if-not (lambda (x) (gethash x indicies))))))))
+
+(defun part-one (input)
+  (-> (mapcan #'cadr (anode-map input))
+      (remove-duplicates <> :test #'equal)
+      length))
+
+;; (part-one (get-input 8))
+
+(defun anodes (positions)
+  (destructuring-bind (pos1 pos2) positions
+    (append positions
+            (loop for mult from 1 to 100
+                  append
+                  (list
+                   (mapcar #'+
+                           pos1
+                           (mapcar #'* `(,mult ,mult)
+                                   (mapcar #'- pos1 pos2)))
+                   (mapcar #'+
+                           pos2
+                           (mapcar #'* `(,mult ,mult)
+                                   (mapcar #'- pos2 pos1))))))))
+
+;; part two:
+;; (part-one (get-input 8))
