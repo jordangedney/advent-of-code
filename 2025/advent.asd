@@ -7,7 +7,8 @@
                :alexandria)
   :components ((:module "src"
                 :components
-                ((:file "main"))))
+                ((:file "test-input")
+                 (:file "main"))))
   :description ""
   :in-order-to ((test-op (test-op "advent/tests"))))
 
