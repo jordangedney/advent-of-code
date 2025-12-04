@@ -60,6 +60,12 @@ L82")
 (set test-2
 "11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124")
 
+(set test-3
+"987654321111111
+811111111111119
+234234234234278
+818181911112111")
+
 ;; day 1 -----------------------------------------------------------------------
 
 (def rot-dir (x) (if (headmatch "R" x) #'+ #'-))
@@ -74,12 +80,12 @@ L82")
   (= ((v (funcall (rot-dir todo) 0 (parse-integer (subseq todo 1))))
       (pos (car oldpos))
       (newpos (+ v pos)))
-    (if (<= newpos 0) 
+    (if (<= newpos 0)
         (= ((npm (mod newpos 100))
             (zeroes (floor (+ 1 (/ (abs newpos) 100)))))
            (if (equalp (car oldpos) 0) (list npm (1- zeroes))
                (list npm zeroes)))
-        
+
         (list (mod newpos 100) (floor (/ newpos 100))))))
 
 (def part-two (input)
@@ -91,7 +97,7 @@ L82")
 
 (def parsed (input)
   (->> (split-on "," input)
-       (mapcar (fn (x) 
+       (mapcar (fn (x)
                  (->> (split-on "-" x )
                       (mapcar (fn (y)
                                 (parse-integer y))))))
@@ -111,12 +117,12 @@ L82")
        alexandria:flatten
        without-nils
        (apply #'+)))
-                 
+
 ;; (part-one (parsed (get-input 2)))
 
 (def chunk (xs n)
   (if (<= (len xs) n) (list xs)
-      (cons (subseq xs 0 n) (chunk (subseq xs n) n)))) 
+      (cons (subseq xs 0 n) (chunk (subseq xs n) n))))
 
 ;; (def chunks (xs)
   ;; (loop for i in (range 1 (1- (len xs)))
@@ -132,7 +138,7 @@ L82")
 
 (def any? (xs) (if (null xs) nil (if (car xs) (car xs) (any? (cdr xs)))))
 
-(def invalid-id2? (num) 
+(def invalid-id2? (num)
   (if (< num 10) nil
       (if (any? (mapcar #'all-equal? (even-chunks (string num)))) num)))
 
@@ -144,3 +150,28 @@ L82")
 ;; (part-two (parsed (get-input 2)))
 
 ;; day 3 -----------------------------------------------------------------------
+
+(def digits (xs) (map #'digit xs))
+(def digits->int (xs) (reduce (fn (l r) (+ (* 10 l) r)) xs))
+(def drop-last (n xs) (subseq xs 0 (- (len xs) n)))
+
+(def next-max (xs)
+  (= ((m (apply #'max xs)))
+     (values m (find-index (fn (x) (equalp m x)) xs))))
+
+(def max-digits-from-line (int-len line)
+  (if (equalp 0 int-len) nil
+      (mvb (max index) (next-max (drop-last (1- int-len) line))
+        (cons max (max-digits-from-line (1- int-len) (subseq line (1+ index)))))))
+
+(def solve (int-len input)
+  (->> (map #'digits (tokens input))
+       (map (fn (xs) (max-digits-from-line int-len xs)))
+       (map #'digits->int)
+       (apply #'+)))
+
+(def part-one (input) (solve 2 input))
+(def part-two (input) (solve 12 input))
+
+(part-one (get-input 3))
+(part-two (get-input 3))
